@@ -1,3 +1,4 @@
+// Select the elements
 const questionsElement = document.getElementById("questions");
 const submitButton = document.getElementById("submit");
 const scoreElement = document.getElementById("score");
@@ -30,6 +31,7 @@ const questions = [
   },
 ];
 
+// Retrieve saved progress from session storage
 const savedProgress = JSON.parse(sessionStorage.getItem("progress")) || {};
 
 // Render questions
@@ -48,22 +50,28 @@ function renderQuestions() {
       choiceElement.setAttribute("type", "radio");
       choiceElement.setAttribute("name", `question-${i}`);
       choiceElement.setAttribute("value", choice);
-      if (savedProgress[i] === choice) {
-        choiceElement.checked = true;
-      }
-      choiceElement.addEventListener("change", () => {
-        savedProgress[i] = choice;
-        sessionStorage.setItem("progress", JSON.stringify(savedProgress));
-      });
       const choiceLabel = document.createElement("label");
       choiceLabel.textContent = choice;
       questionContainer.appendChild(choiceElement);
       questionContainer.appendChild(choiceLabel);
+      
+      // Set checked attribute explicitly after appending to DOM
+      if (savedProgress[i] === choice) {
+        setTimeout(() => {
+          choiceElement.checked = true;
+        }, 0);
+      }
+
+      choiceElement.addEventListener("change", () => {
+        savedProgress[i] = choice;
+        sessionStorage.setItem("progress", JSON.stringify(savedProgress));
+      });
     }
     questionsElement.appendChild(questionContainer);
   }
 }
 
+// Submit quiz and calculate score
 submitButton.addEventListener("click", () => {
   let score = 0;
   for (let i = 0; i < questions.length; i++) {
@@ -75,9 +83,11 @@ submitButton.addEventListener("click", () => {
   scoreElement.textContent = `Your score is ${score} out of 5.`;
 });
 
+// Load last stored score
 const savedScore = localStorage.getItem("score");
 if (savedScore !== null) {
   scoreElement.textContent = `Your score is ${savedScore} out of 5.`;
 }
 
+// Initialize quiz
 renderQuestions();
