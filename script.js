@@ -10,7 +10,7 @@ const questions = [
         answer: "Mars"
     },
     {
-        question: "Who wrote 'Hamlet'?",
+        question: "What is the largest country by area?",
         options: ["Charles Dickens", "William Shakespeare", "Mark Twain", "Jane Austen"],
         answer: "William Shakespeare"
     },
