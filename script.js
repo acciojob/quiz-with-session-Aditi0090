@@ -5,7 +5,7 @@ const questions = [
         answer: "Paris"
     },
     {
-        question: "Which planet is known as the Red Planet?",
+        question: "What is the highest mountain in the world?",
         options: ["Earth", "Mars", "Jupiter", "Saturn"],
         answer: "Mars"
     },
