@@ -15,7 +15,7 @@ const questions = [
         answer: "William Shakespeare"
     },
     {
-        question: "What is the largest mammal?",
+        question: "Which is the largest planet in our solar system?",
         options: ["Elephant", "Blue Whale", "Giraffe", "Gorilla"],
         answer: "Blue Whale"
     },
