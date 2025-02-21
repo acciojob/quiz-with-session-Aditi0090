@@ -1,17 +1,44 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz with Score Tracking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #questions div {
+            margin-bottom: 15px;
+        }
+        #score {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
 
-<html>
-  <head>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+    <h2>Quiz</h2>
 
-  <body>
-    <!-- do not change this code -->
-    <h1>Quiz</h1>
-    <div id="questions"></div>
+    <div id="questions">
+    </div>
+
     <button id="submit">Submit</button>
     <div id="score"></div>
 
-    <script type="text/javascript" src="./script.js"></script>
-  </body>
+    <script src="script.js"></script>
+
+</body>
 </html>
