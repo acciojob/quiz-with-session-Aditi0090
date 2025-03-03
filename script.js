@@ -30,10 +30,9 @@ const questionsElement = document.getElementById("questions");
 const submitButton = document.getElementById("submit");
 const scoreElement = document.getElementById("score");
 
-// Load progress from session storage
-const userAnswers = JSON.parse(sessionStorage.getItem("progress")) || {};
+// Load progress from session storage (ensure it's an array)
+const userAnswers = JSON.parse(sessionStorage.getItem("progress")) || new Array(questions.length).fill(null);
 
-// Display questions and choices
 function renderQuestions() {
   questionsElement.innerHTML = "";
   questions.forEach((question, index) => {
@@ -47,6 +46,8 @@ function renderQuestions() {
       choiceElement.setAttribute("type", "radio");
       choiceElement.setAttribute("name", `question-${index}`);
       choiceElement.setAttribute("value", choice);
+      
+      // Ensure checked state is correctly applied
       if (userAnswers[index] === choice) {
         choiceElement.checked = true;
       }
@@ -86,5 +87,5 @@ if (savedScore !== null) {
   scoreElement.textContent = `Your score is ${savedScore} out of 5.`;
 }
 
-// Render the quiz
-renderQuestions();
+// Ensure script runs after DOM content is fully loaded
+document.addEventListener("DOMContentLoaded", renderQuestions);
