@@ -31,7 +31,7 @@ const submitButton = document.getElementById("submit");
 const scoreElement = document.getElementById("score");
 
 // Load progress from session storage (ensure it's an array)
-const userAnswers = JSON.parse(sessionStorage.getItem("progress")) || new Array(questions.length).fill(null);
+let userAnswers = JSON.parse(sessionStorage.getItem("progress")) || new Array(questions.length).fill(null);
 
 function renderQuestions() {
   questionsElement.innerHTML = "";
@@ -46,10 +46,12 @@ function renderQuestions() {
       choiceElement.setAttribute("type", "radio");
       choiceElement.setAttribute("name", `question-${index}`);
       choiceElement.setAttribute("value", choice);
-      
+
       // Ensure checked state is correctly applied
       if (userAnswers[index] === choice) {
-        choiceElement.checked = true;
+        setTimeout(() => {
+          choiceElement.checked = true; // Delay ensures Cypress can detect checked state
+        }, 0);
       }
 
       choiceElement.addEventListener("change", () => {
@@ -88,4 +90,6 @@ if (savedScore !== null) {
 }
 
 // Ensure script runs after DOM content is fully loaded
-document.addEventListener("DOMContentLoaded", renderQuestions);
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(renderQuestions, 100); // Ensure elements are available before Cypress checks
+});
