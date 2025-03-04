@@ -1,100 +1,92 @@
 const questions = [
-  {
-    question: "What is the capital of France?",
-    choices: ["Paris", "London", "Berlin", "Madrid"],
-    answer: "Paris",
-  },
-  {
-    question: "What is the highest mountain in the world?",
-    choices: ["Everest", "Kilimanjaro", "Denali", "Matterhorn"],
-    answer: "Everest",
-  },
-  {
-    question: "What is the largest country by area?",
-    choices: ["Russia", "China", "Canada", "United States"],
-    answer: "Russia",
-  },
-  {
-    question: "Which is the largest planet in our solar system?",
-    choices: ["Earth", "Jupiter", "Mars", "Saturn"],
-    answer: "Jupiter",
-  },
-  {
-    question: "What is the capital of Canada?",
-    choices: ["Toronto", "Montreal", "Vancouver", "Ottawa"],
-    answer: "Ottawa",
-  },
+    {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+        answer: 2
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+        answer: 1
+    },
+    {
+        question: "What is the largest ocean on Earth?",
+        options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+        answer: 3
+    },
+    {
+        question: "Who wrote 'Romeo and Juliet'?",
+        options: ["Charles Dickens", "Mark Twain", "William Shakespeare", "Jane Austen"],
+        answer: 2
+    },
+    {
+        question: "What is the smallest prime number?",
+        options: ["0", "1", "2", "3"],
+        answer: 2
+    }
 ];
 
-let userAnswers = JSON.parse(sessionStorage.getItem("progress")) || Array(questions.length).fill(null);
+const questionsContainer = document.getElementById('questions');
+const scoreDisplay = document.getElementById('score');
+const submitButton = document.getElementById('submit');
 
-const questionElement = document.getElementById("questions");
-const submitButton = document.getElementById("submit");
-const scoreElement = document.getElementById("score");
-
-function renderQuestions() {
-  questionElement.innerHTML = "";
-
-  for (let i = 0; i < questions.length; i++) {
-    const question = questions[i];
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.add("question");
-
-    const questionText = document.createElement("p");
-    questionText.textContent = question.question;
-    questionContainer.appendChild(questionText);
-
-    for (let j = 0; j < question.choices.length; j++) {
-      const choice = question.choices[j];
-      const choiceContainer = document.createElement("div");
-      const choiceInput = document.createElement("input");
-
-      choiceInput.setAttribute("type", "radio");
-      choiceInput.setAttribute("name", `question-${i}`);
-      choiceInput.setAttribute("value", choice);
-      choiceInput.id = `question-${i}-choice-${j}`;
-
-      if (userAnswers[i] === choice) {
-        choiceInput.checked = true;
-      }
-
-      choiceInput.addEventListener("change", function () {
-        userAnswers[i] = choice;
-        sessionStorage.setItem("progress", JSON.stringify(userAnswers));
+// Load questions and previous selections
+function loadQuiz() {
+    questions.forEach((q, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.innerHTML = `<h2>${q.question}</h2>`;
         
-        // Ensure the checked attribute updates immediately
-        document.querySelectorAll(`input[name='question-${i}']`).forEach(input => {
-          input.checked = input.value === choice;
+        q.options.forEach((option, i) => {
+            const checked = sessionStorage.getItem('progress') ? JSON.parse(sessionStorage.getItem('progress'))[index] === i : false;
+            questionDiv.innerHTML += `
+                <label>
+                    <input type="radio" name="question${index}" value="${i}" ${checked ? 'checked' : ''}>
+                    ${option}
+                </label><br>
+            `;
         });
-      });
-
-      const choiceLabel = document.createElement("label");
-      choiceLabel.setAttribute("for", choiceInput.id);
-      choiceLabel.textContent = choice;
-
-      choiceContainer.appendChild(choiceInput);
-      choiceContainer.appendChild(choiceLabel);
-      questionContainer.appendChild(choiceContainer);
-    }
-    questionElement.appendChild(questionContainer);
-  }
+        
+        questionsContainer.appendChild(questionDiv);
+    });
 }
 
-submitButton.addEventListener("click", function () {
-  let score = 0;
-  for (let i = 0; i < questions.length; i++) {
-    if (userAnswers[i] === questions[i].answer) {
-      score++;
-    }
-  }
-  scoreElement.textContent = `Your score is ${score} out of 5.`;
-  localStorage.setItem("score", score);
+// Save progress to session storage
+function saveProgress() {
+    const progress = [];
+    questions.forEach((_, index) => {
+        const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+        progress[index] = selectedOption ? parseInt(selectedOption.value) : null;
+    });
+    sessionStorage.setItem('progress', JSON.stringify(progress));
+}
+
+// Calculate score
+function calculateScore() {
+    let score = 0;
+    const progress = JSON.parse(sessionStorage.getItem('progress'));
+    
+    questions.forEach((q, index) => {
+        if (progress[index] !== null && progress[index] === q.answer) {
+            score++;
+        }
+    });
+    
+    return score;
+}
+
+// Handle quiz submission
+submitButton.addEventListener('click', () => {
+    saveProgress();
+    const score = calculateScore();
+    scoreDisplay.innerText = `Your score is ${score} out of ${questions.length}.`;
+    localStorage.setItem('score', score);
 });
 
-// Display stored score if exists
-const savedScore = localStorage.getItem("score");
-if (savedScore !== null) {
-  scoreElement.textContent = `Your last score was ${savedScore} out of 5.`;
-}
-
-renderQuestions();
+// Load quiz on page load
+window.onload = () => {
+    loadQuiz();
+    const savedScore = localStorage.getItem('score');
+    if (savedScore !== null) {
+        scoreDisplay.innerText = `Your last score was ${savedScore} out of ${questions.length}.`;
+    }
+};
