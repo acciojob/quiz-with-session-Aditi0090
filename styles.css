@@ -1,1 +1,44 @@
-/*  your css code here. If applicable */
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+h1 {
+  color: #333;
+}
+
+#questions {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.question {
+  background: white;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+#score {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}

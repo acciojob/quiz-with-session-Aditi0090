@@ -26,70 +26,69 @@ const questions = [
   },
 ];
 
-const questionsElement = document.getElementById("questions");
+let userAnswers = JSON.parse(sessionStorage.getItem("progress")) || Array(questions.length).fill(null);
+
+const questionElement = document.getElementById("questions");
 const submitButton = document.getElementById("submit");
 const scoreElement = document.getElementById("score");
 
-// Load progress from session storage (ensure it's an array)
-let userAnswers = JSON.parse(sessionStorage.getItem("progress")) || new Array(questions.length).fill(null);
-
 function renderQuestions() {
-  questionsElement.innerHTML = "";
-  questions.forEach((question, index) => {
-    const questionElement = document.createElement("div");
+  questionElement.innerHTML = "";
+
+  for (let i = 0; i < questions.length; i++) {
+    const question = questions[i];
+    const questionContainer = document.createElement("div");
+    questionContainer.classList.add("question");
+
     const questionText = document.createElement("p");
     questionText.textContent = question.question;
-    questionElement.appendChild(questionText);
+    questionContainer.appendChild(questionText);
 
-    question.choices.forEach((choice) => {
-      const choiceElement = document.createElement("input");
-      choiceElement.setAttribute("type", "radio");
-      choiceElement.setAttribute("name", `question-${index}`);
-      choiceElement.setAttribute("value", choice);
+    for (let j = 0; j < question.choices.length; j++) {
+      const choice = question.choices[j];
+      const choiceContainer = document.createElement("div");
+      const choiceInput = document.createElement("input");
 
-      // Ensure checked state is correctly applied
-      if (userAnswers[index] === choice) {
-        setTimeout(() => {
-          choiceElement.checked = true; // Delay ensures Cypress can detect checked state
-        }, 0);
+      choiceInput.setAttribute("type", "radio");
+      choiceInput.setAttribute("name", `question-${i}`);
+      choiceInput.setAttribute("value", choice);
+      choiceInput.id = `question-${i}-choice-${j}`;
+
+      if (userAnswers[i] === choice) {
+        choiceInput.checked = true;
       }
 
-      choiceElement.addEventListener("change", () => {
-        userAnswers[index] = choice;
+      choiceInput.addEventListener("change", function () {
+        userAnswers[i] = choice;
         sessionStorage.setItem("progress", JSON.stringify(userAnswers));
       });
 
-      const label = document.createElement("label");
-      label.appendChild(choiceElement);
-      label.appendChild(document.createTextNode(choice));
+      const choiceLabel = document.createElement("label");
+      choiceLabel.setAttribute("for", choiceInput.id);
+      choiceLabel.textContent = choice;
 
-      questionElement.appendChild(label);
-    });
-
-    questionsElement.appendChild(questionElement);
-  });
+      choiceContainer.appendChild(choiceInput);
+      choiceContainer.appendChild(choiceLabel);
+      questionContainer.appendChild(choiceContainer);
+    }
+    questionElement.appendChild(questionContainer);
+  }
 }
 
-// Submit quiz and calculate score
-submitButton.addEventListener("click", () => {
+submitButton.addEventListener("click", function () {
   let score = 0;
-  questions.forEach((question, index) => {
-    if (userAnswers[index] === question.answer) {
+  for (let i = 0; i < questions.length; i++) {
+    if (userAnswers[i] === questions[i].answer) {
       score++;
     }
-  });
-
+  }
   scoreElement.textContent = `Your score is ${score} out of 5.`;
   localStorage.setItem("score", score);
 });
 
-// Show previous score if available
 const savedScore = localStorage.getItem("score");
 if (savedScore !== null) {
-  scoreElement.textContent = `Your score is ${savedScore} out of 5.`;
+  scoreElement.textContent = `Your last score was ${savedScore} out of 5.`;
 }
 
-// Ensure script runs after DOM content is fully loaded
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(renderQuestions, 100); // Ensure elements are available before Cypress checks
-});
+renderQuestions();
