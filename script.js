@@ -61,6 +61,11 @@ function renderQuestions() {
       choiceInput.addEventListener("change", function () {
         userAnswers[i] = choice;
         sessionStorage.setItem("progress", JSON.stringify(userAnswers));
+        
+        // Ensure the checked attribute updates immediately
+        document.querySelectorAll(`input[name='question-${i}']`).forEach(input => {
+          input.checked = input.value === choice;
+        });
       });
 
       const choiceLabel = document.createElement("label");
@@ -86,6 +91,7 @@ submitButton.addEventListener("click", function () {
   localStorage.setItem("score", score);
 });
 
+// Display stored score if exists
 const savedScore = localStorage.getItem("score");
 if (savedScore !== null) {
   scoreElement.textContent = `Your last score was ${savedScore} out of 5.`;
